@@ -2,10 +2,10 @@
 
 namespace FizzBuzz;
 
-internal record Rule(string Code, params int[] Devisors)
+internal record Rule(string Code, params int[] Divisors)
 {
     public bool AppliesTo(int divident) =>
-        Devisors.All(devisor => divident % devisor == 0);
+        Divisors.All(divisor => divident % divisor == 0);
 }
 
 internal static class RuleFetcher
@@ -16,7 +16,7 @@ internal static class RuleFetcher
     {
         var baseRules = await FetchRulesAsync("https://epinova-fizzbuzz.azurewebsites.net/api/static-rules");
         var extendedRules = ExtendWithCombinedRule(baseRules);
-        var sorted = extendedRules.OrderByDescending(rule => rule.Devisors.Length);
+        var sorted = extendedRules.OrderByDescending(rule => rule.Divisors.Length);
         return sorted;
     }
     
@@ -24,7 +24,7 @@ internal static class RuleFetcher
     {
         var baseRules = await FetchRulesAsync("https://epinova-fizzbuzz.azurewebsites.net/api/dynamic-rules");
         var extendedRules = ExtendWithCombinedRule(baseRules);
-        var sorted = extendedRules.OrderByDescending(rule => rule.Devisors.Length);
+        var sorted = extendedRules.OrderByDescending(rule => rule.Divisors.Length);
         return sorted;
     }
 
@@ -44,7 +44,7 @@ internal static class RuleFetcher
         var extendedRules = baseRules.ToList();
         var combinedRule = new Rule(
             Code: $"{extendedRules[0].Code} {extendedRules[1].Code}",
-            Devisors: [extendedRules[0].Devisors[0], extendedRules[1].Devisors[0]]);
+            Divisors: [extendedRules[0].Divisors[0], extendedRules[1].Divisors[0]]);
         extendedRules.Add(combinedRule);
 
         return extendedRules;
