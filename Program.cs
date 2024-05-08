@@ -1,4 +1,5 @@
 ﻿using FizzBuzz;
+using System.Text.Json;
 
 static void PrintResults(IEnumerable<int> numbers, IEnumerable<Rule> rules)
 {
@@ -19,7 +20,10 @@ static void PrintResults(IEnumerable<int> numbers, IEnumerable<Rule> rules)
 }
 
 var staticRules = await RuleFetcher.FetchStaticRulesAsync();
+Console.WriteLine($"Current rules: {JsonSerializer.Serialize(staticRules)}");
+Console.Write("Press any key to continue: "); Console.ReadKey();
+
 PrintResults(Enumerable.Range(1, 100), staticRules);
 
-var dynamicRules = await RuleFetcher.FetchDynamicRulesAsync();
-PrintResults(Enumerable.Range(1, 100), dynamicRules);
+//var dynamicRules = await RuleFetcher.FetchDynamicRulesAsync();
+//PrintResults(Enumerable.Range(1, 100), dynamicRules);
