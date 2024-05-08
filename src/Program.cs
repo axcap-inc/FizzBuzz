@@ -5,17 +5,11 @@ static void PrintResults(IEnumerable<int> numbers, IEnumerable<Rule> rules)
 {
     foreach (var number in numbers)
     {
-        bool anyRuleApplied = false;
-        foreach (var rule in rules)
-        {
-            if (rule.AppliesTo(number))
-            {
-                anyRuleApplied = true;
-                Console.WriteLine(rule.Code);
-            }
-        }
-
-        if (!anyRuleApplied) Console.WriteLine(number);
+        var rule = rules.FirstOrDefault(rule => rule.AppliesTo(number));
+        if (rule is not null)
+            Console.WriteLine(rule.Code);
+        else
+            Console.WriteLine(number);
     }
 }
 
