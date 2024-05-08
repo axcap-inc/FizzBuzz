@@ -2,19 +2,19 @@
 
 static void PrintResults(IEnumerable<int> numbers, IEnumerable<Rule> rules)
 {
-    foreach (var i in numbers)
+    foreach (var number in numbers)
     {
         bool anyRuleApplied = false;
         foreach (var rule in rules)
         {
-            if (rule.Applies(i))
+            if (rule.AppliesTo(number))
             {
                 anyRuleApplied = true;
                 Console.WriteLine(rule.Code);
             }
         }
 
-        if (!anyRuleApplied) Console.WriteLine(i);
+        if (!anyRuleApplied) Console.WriteLine(number);
     }
 }
 
