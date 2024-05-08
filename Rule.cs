@@ -1,7 +1,7 @@
 ﻿namespace FizzBuzz;
 
-internal record Rule(string Code, params int[] Devisors)
+internal record Rule(string Code, params int[] Divisors)
 {
     public bool Applies(int divident) =>
-        Devisors.All(devisor => divident % devisor == 0);
+        Divisors.All(divisor => divident % divisor == 0);
 }
