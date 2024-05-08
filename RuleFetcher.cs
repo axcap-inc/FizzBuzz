@@ -34,7 +34,7 @@ internal static class RuleFetcher
         response.EnsureSuccessStatusCode();
 
         var json = await response.Content.ReadAsStringAsync();
-        var rules = JsonSerializer.Deserialize<IEnumerable<EpiNovaRuleDto>>(json);
+        var rules = JsonSerializer.Deserialize<IEnumerable<EpinovaRuleDto>>(json);
 
         return rules?.Select(x => new Rule(x.Word, [x.Number])) ?? [];
     }
@@ -50,7 +50,7 @@ internal static class RuleFetcher
         return extendedRules;
     }
 
-    private class EpiNovaRuleDto
+    private class EpinovaRuleDto
     {
         public required int Number { get; init; }
         public required string Word { get; init; }
