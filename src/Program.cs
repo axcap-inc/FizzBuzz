@@ -5,9 +5,9 @@ static void PrintResults(IEnumerable<int> numbers, IEnumerable<Rule> rules)
 {
     foreach (var number in numbers)
     {
-        var rule = rules.FirstOrDefault(rule => rule.AppliesTo(number));
-        if (rule is not null)
-            Console.WriteLine(rule.Code);
+        var hits = rules.Where(rule => rule.AppliesTo(number));
+        if (hits.Any())
+            Console.WriteLine(string.Join("", hits.Select(r => r.Code)));
         else
             Console.WriteLine(number);
     }
