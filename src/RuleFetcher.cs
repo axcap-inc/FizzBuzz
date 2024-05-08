@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Collections;
+using System.Text.Json;
 
 namespace FizzBuzz;
 
@@ -8,27 +9,36 @@ internal record Rule(string Code, params int[] Divisors)
         Divisors.All(divisor => divident % divisor == 0);
 }
 
+internal class RuleSet(IEnumerable<Rule> rules) : IEnumerable<Rule>
+{
+    private readonly IEnumerable<Rule> rules = rules;
+
+    internal IEnumerable<Rule> Rules => 
+        rules.OrderByDescending(rule => rule.Divisors.Length);
+
+    public IEnumerator<Rule> GetEnumerator() => rules.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+}
+
 internal static class RuleFetcher
 {
     private static readonly HttpClient Client = new();
 
-    public static async Task<IEnumerable<Rule>> FetchStaticRulesAsync()
+    public static async Task<RuleSet> FetchStaticRulesAsync()
     {
         var baseRules = await FetchRulesAsync("https://epinova-fizzbuzz.azurewebsites.net/api/static-rules");
         var extendedRules = ExtendWithCombinedRule(baseRules);
-        var sorted = extendedRules.OrderByDescending(rule => rule.Divisors.Length);
-        return sorted;
+        return new RuleSet(extendedRules);
     }
     
-    public static async Task<IEnumerable<Rule>> FetchDynamicRulesAsync()
+    public static async Task<RuleSet> FetchDynamicRulesAsync()
     {
         var baseRules = await FetchRulesAsync("https://epinova-fizzbuzz.azurewebsites.net/api/dynamic-rules");
         var extendedRules = ExtendWithCombinedRule(baseRules);
-        var sorted = extendedRules.OrderByDescending(rule => rule.Divisors.Length);
-        return sorted;
+        return new RuleSet(extendedRules);
     }
 
-    public static async Task<IEnumerable<Rule>> FetchRulesAsync(string Url)
+    public static async Task<RuleSet> FetchRulesAsync(string Url)
     {
         var response = await Client.GetAsync(Url);
         response.EnsureSuccessStatusCode();
@@ -36,7 +46,7 @@ internal static class RuleFetcher
         var json = await response.Content.ReadAsStringAsync();
         var rules = JsonSerializer.Deserialize<IEnumerable<EpinovaRuleDto>>(json);
 
-        return rules?.Select(x => new Rule(x.Word, [x.Number])) ?? [];
+        return new RuleSet(rules?.Select(x => new Rule(x.Word, [x.Number])) ?? []);
     }
 
     private static List<Rule> ExtendWithCombinedRule(IEnumerable<Rule> baseRules)
